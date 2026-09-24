@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#222222"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>P.S. Oil Production Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:14px;color:#222}
+.app{max-width:520px;margin:auto}.head{padding:10px 4px 14px}.head h2{margin:0}.sub{color:#666;font-size:13px;margin-top:4px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.tab{padding:12px 5px;border:1px solid #ddd;border-radius:10px;background:white;font-weight:bold}.active{background:#e8f0ff}
+.card{background:white;border:1px solid #ddd;border-radius:14px;padding:15px;margin-bottom:12px}
+h3{margin:0 0 12px;font-size:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;font-weight:bold;color:#666;display:block;margin-bottom:5px}
+input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ccc;border-radius:9px;font-size:16px}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{background:#f7f7f7;border:1px solid #ddd;border-radius:10px;padding:12px}.box span{font-size:12px;color:#666}.box strong{display:block;font-size:19px;margin-top:3px}.big{grid-column:1/-1}.big strong{font-size:28px}
+button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;color:#fff;font-size:16px;font-weight:bold}
+.note{font-size:12px;color:#666;line-height:1.45;margin-top:10px}
+@media(max-width:380px){.grid,.results{grid-template-columns:1fr}.big{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="head"><h2>🥜 P.S. Production Calculator</h2><button id="installBtn" style="display:none;margin-top:10px;padding:10px 14px;border:0;border-radius:9px;background:#222;color:#fff;font-weight:bold;">📲 Install App</button><div class="sub">Oil & special product production cost calculator</div></div>
+<div class="tabs">
+<button class="tab active" data-p="oil">🥜 Groundnut</button>
+<button class="tab" data-p="coconut">🥥 Coconut</button>
+<button class="tab" data-p="special">🍋 Special</button>
+</div>
+
+<div class="card">
+<h3 id="title">🥜 Groundnut Oil</h3>
+<div class="grid">
+<div><label>Raw material kg</label><input id="qty" type="number" value="50" min="0" step=".01"></div>
+<div><label>Price / kg ₹</label><input id="price" type="number" value="120" min="0" step=".01"></div>
+<div><label>Dry / processing loss kg</label><input id="loss" type="number" value="3" min="0" step=".01"></div>
+<div><label>Oil yield / kg</label><input id="yield" type="number" value=".450" min="0" step=".001"></div>
+<div><label>Petrol / transport ₹</label><input id="petrol" type="number" value="100" min="0"></div>
+<div><label>Initial labour ₹</label><input id="labour" type="number" value="100" min="0"></div>
+<div><label>Oil labour ₹</label><input id="oilLabour" type="number" value="400" min="0"></div>
+<div><label>Punnakku kg</label><input id="cakeQty" type="number" value="25.85" min="0" step=".01"></div>
+<div><label>Punnakku price / kg ₹</label><input id="cakePrice" type="number" value="50" min="0" step=".01"></div>
+<div><label>Bottle / litre ₹</label><input id="bottle" type="number" value="12" min="0"></div>
+<div><label>Profit %</label><input id="profit" type="number" value="5" min="0" step=".1"></div>
+<div><label>Oil density kg/L</label><input id="density" type="number" value=".914" min=".1" step=".001"></div>
+</div>
+</div>
+
+<div class="card" id="extra">
+<h3>🍋 Extra Ingredients</h3>
+<div class="grid">
+<div><label>Jaggery kg</label><input id="jqty" type="number" value="0" min="0" step=".01"></div>
+<div><label>Jaggery ₹/kg</label><input id="jprice" type="number" value="80" min="0"></div>
+<div><label>Lemon kg</label><input id="lqty" type="number" value="0" min="0" step=".01"></div>
+<div><label>Lemon ₹/kg</label><input id="lprice" type="number" value="100" min="0"></div>
+<div><label>Gram kg</label><input id="gqty" type="number" value="0" min="0" step=".001"></div>
+<div><label>Gram ₹/kg</label><input id="gprice" type="number" value="200" min="0"></div>
+<div><label>Cardamom kg</label><input id="cqty" type="number" value="0" min="0" step=".001"></div>
+<div><label>Cardamom ₹/kg</label><input id="cprice" type="number" value="2000" min="0"></div>
+<div><label>Water ₹</label><input id="water" type="number" value="15" min="0"></div>
+<div><label>Other cost ₹</label><input id="other" type="number" value="0" min="0"></div>
+</div>
+</div>
+
+<div class="card">
+<h3>📊 Result</h3>
+<div class="results">
+<div class="box"><span>Usable raw material</span><strong id="usable">-</strong></div>
+<div class="box"><span>Oil output</span><strong id="oilkg">-</strong></div>
+<div class="box"><span>Total litres</span><strong id="litres">-</strong></div>
+<div class="box"><span>Total production cost</span><strong id="total">-</strong></div><div class="box"><span>Punnakku income</span><strong id="cakeIncome">-</strong></div>
+<div class="box"><span>Cost / kg</span><strong id="costkg">-</strong></div>
+<div class="box"><span>Cost / litre</span><strong id="costl">-</strong></div>
+<div class="box big"><span>💰 Selling price / litre with profit</span><strong id="sell">-</strong></div>
+</div>
+<div class="note">Punnakku income is deducted from total production cost. Drying loss is already included in the purchased raw-material cost and is not double-counted.</div>
+</div>
+<button class="calc" id="calculate">Calculate Price 🔄</button>
+</div>
+
+<script>
+let deferredInstallPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault(); deferredInstallPrompt=e;
+  const b=document.getElementById("installBtn"); if(b) b.style.display="block";
+});
+document.addEventListener("click",async e=>{
+  if(e.target && e.target.id==="installBtn" && deferredInstallPrompt){
+    deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null; e.target.style.display="none";
+  }
+});
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js")); }
+const $=id=>document.getElementById(id);
+const n=id=>Math.max(0,parseFloat($(id).value)||0);
+const money=x=>'₹'+x.toFixed(2);
+function calc(){
+ let q=n('qty'), loss=Math.min(n('loss'),q), usable=q-loss;
+ let oilkg=usable*n('yield'), density=n('density')||1, litres=oilkg/density;
+ let raw=q*n('price');
+ let extras=n('petrol')+n('labour')+n('oilLabour');
+ let ingredients=n('jqty')*n('jprice')+n('lqty')*n('lprice')+n('gqty')*n('gprice')+n('cqty')*n('cprice')+n('water')+n('other');
+ let cakeIncome=n('cakeQty')*n('cakePrice');
+ let grossTotal=raw+extras+ingredients+litres*n('bottle');
+ let total=Math.max(0,grossTotal-cakeIncome);
+ let costkg=oilkg?total/oilkg:0, costl=litres?total/litres:0;
+ $('cakeIncome').textContent=money(cakeIncome);
+ $('usable').textContent=usable.toFixed(2)+' kg';
+ $('oilkg').textContent=oilkg.toFixed(3)+' kg';
+ $('litres').textContent=litres.toFixed(2)+' L';
+ $('total').textContent=money(total);
+ $('costkg').textContent=money(costkg);
+ $('costl').textContent=money(costl);
+ $('sell').textContent=money(costl*(1+n('profit')/100));
+}
+const presets={
+ oil:['🥜 Groundnut Oil',120,.450,3,.914],
+ coconut:['🥥 Coconut Oil',200,.650,0,.920],
+ special:['🍋 Special Product',0,1,0,1]
+};
+document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ const p=presets[btn.dataset.p];$('title').textContent=p[0];$('price').value=p[1];$('yield').value=p[2];$('loss').value=p[3];$('density').value=p[4];
+ $('extra').style.display=btn.dataset.p==='oil'?'none':'block';calc();
+});
+document.querySelectorAll('input').forEach(x=>x.oninput=calc);
+$('calculate').onclick=calc;$('extra').style.display='none';calc();
+</script>
+</body>
+</html>
