@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#222222"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
 <title>P.S. Oil Production Calculator</title>
-<style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=imSrE-XYkoI5Un58znkv21QAMnChOJebbaNibI4Pk9Cw0lyyA1CjFEX-NlDxgqRbPRAb4b1o4aiGlL2H55SQfxkr0QkJrH3OS_Nvwml7MLWqHgPfKvXd7OSUCXs089SEsAIKWfpUX6bG4GcyRcMsxfTW5TseN8qNrWRuoNW2jZaaBZi9TSSuQzvFNoYGSEWIZM2XEnZn6ND6UQDHpE6JqwJ0VCYqDJs1HBWycCyCJw_B3pTlEV998Fduueq6B0XiJY53KKpnUIj5fsgeOgfufkbCNfYegja6d0sSU1QQ0Gcwd7Trf6k9sW-miYrJkAjH" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDcxNTA4MWZkODVjOTFlN2NhOWJjYTY3NyZmbj1pbmRleCUyODElMjkuaHRtbCZjZD1hdHRhY2htZW50JnRzPTQ5NzMyMCZwPWZzJmNpZD0xJnNpZz03NjMwNTZjNTJhMjQ2MmE0MmVmMTUwYmQ0Y2JiNDY5ZjI0NTA2ODBmNjM4NDBiNTMyZjBkMGFlY2U0YjRlMjQwJnY9MA"/><style>
 body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:14px;color:#222}
 .app{max-width:520px;margin:auto}.head{padding:10px 4px 14px}.head h2{margin:0}.sub{color:#666;font-size:13px;margin-top:4px}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.tab{padding:12px 5px;border:1px solid #ddd;border-radius:10px;background:white;font-weight:bold}.active{background:#e8f0ff}
@@ -52,6 +52,7 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 </div>
 
 <div class="grid">
+<div class="card" style="padding:12px;margin-top:10px;background:#fff"><h3 style="font-size:15px">⚙️ Raw Material 1 Processing</h3><div class="grid">
 <div><label>Oil yield / kg</label><input id="yield" type="number" value=".450" min="0" step=".001"></div>
 <div><label>Petrol / transport ₹</label><input id="petrol" type="number" value="100" min="0"></div>
 <div><label>Initial labour ₹</label><input id="labour" type="number" value="100" min="0"></div>
@@ -61,7 +62,18 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 <div><label>Bottle / litre ₹</label><input id="bottle" type="number" value="12" min="0"></div>
 <div><label>Profit %</label><input id="profit" type="number" value="5" min="0" step=".1"></div>
 <div><label>Oil density kg/L</label><input id="density" type="number" value=".914" min=".1" step=".001"></div>
-</div>
+</div></div>
+<div class="card" style="padding:12px;margin-top:10px;background:#fff"><h3 style="font-size:15px">⚙️ Raw Material 2 Processing</h3><div class="grid">
+<div><label>Oil yield / kg</label><input id="yield2" type="number" value="0" min="0" step=".001"></div>
+<div><label>Petrol / transport ₹</label><input id="petrol2" type="number" value="0" min="0"></div>
+<div><label>Initial labour ₹</label><input id="labour2" type="number" value="0" min="0"></div>
+<div><label>Oil labour ₹</label><input id="oilLabour2" type="number" value="0" min="0"></div>
+<div><label>Punnakku kg</label><input id="cakeQty2" type="number" value="0" min="0" step=".01"></div>
+<div><label>Punnakku price / kg ₹</label><input id="cakePrice2" type="number" value="0" min="0" step=".01"></div>
+<div><label>Bottle / litre ₹</label><input id="bottle2" type="number" value="0" min="0"></div>
+<div><label>Profit %</label><input id="profit2" type="number" value="5" min="0" step=".1"></div>
+<div><label>Oil density kg/L</label><input id="density2" type="number" value=".914" min=".1" step=".001"></div>
+</div></div>
 </div>
 
 <div class="card" id="extra">
@@ -106,152 +118,51 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 </div>
 
 <script>
-let deferredInstallPrompt=null;
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault(); deferredInstallPrompt=e;
-  const b=document.getElementById("installBtn"); if(b) b.style.display="block";
-});
-document.addEventListener("click",async e=>{
-  if(e.target && e.target.id==="installBtn" && deferredInstallPrompt){
-    deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt=null; e.target.style.display="none";
-  }
-});
-if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js")); }
-const $=id=>document.getElementById(id);
-const n=id=>Math.max(0,parseFloat($(id).value)||0);
-const money=x=>'₹'+x.toFixed(2);
-function calc(){
- let q=n('qty'), q2=n('qty2');
- let loss=Math.min(n('loss'),q), loss2=Math.min(n('loss2'),q2);
- let usable1=q-loss, usable2=q2-loss2, usable=usable1+usable2;
- let oilkg=usable*n('yield'), density=n('density')||1, litres=oilkg/density;
- let raw=q*n('price')+q2*n('price2');
- let extras=n('petrol')+n('labour')+n('oilLabour');
- let ingredients=n('jqty')*n('jprice')+n('lqty')*n('lprice')+n('gqty')*n('gprice')+n('cqty')*n('cprice')+n('water')+n('other');
- let cakeIncome=n('cakeQty')*n('cakePrice');
- let grossTotal=raw+extras+ingredients+litres*n('bottle');
- let total=Math.max(0,grossTotal-cakeIncome);
- let costkg=oilkg?total/oilkg:0, costl=litres?total/litres:0;
- $('cakeIncome').textContent=money(cakeIncome);
- $('usable').textContent=usable.toFixed(2)+' kg';
- $('oilkg').textContent=oilkg.toFixed(3)+' kg';
- $('litres').textContent=litres.toFixed(2)+' L';
- $('total').textContent=money(total);
- $('costkg').textContent=money(costkg);
- $('costl').textContent=money(costl);
- $('sell').textContent=money(costl*(1+n('profit')/100));
-}
-
-function setRawMaterialDefaults(type){
-  if(type==='oil'){
-    $('raw1Name').value='Groundnut'; $('raw2Name').value='Other';
-  }else if(type==='coconut'){
-    $('raw1Name').value='Coconut'; $('raw2Name').value='Other';
-  }else if(type==='sesame'){
-    $('raw1Name').value='Sesame'; $('raw2Name').value='Other';
-  }else{
-    $('raw1Name').value='Raw Material 1'; $('raw2Name').value='Raw Material 2';
-  }
-}
 
 const presets={
- oil:['🥜 Groundnut Oil',120,.450,3,.914],
- coconut:['🥥 Coconut Oil',200,.650,0,.920],
- sesame:['🌿 Sesame Oil',150,.400,0,.920],
- other:['📦 Other Product',0,1,0,1]
+ oil:['🥜 Groundnut Oil','Groundnut',120,.450,3,.914],
+ coconut:['🥥 Coconut Oil','Coconut',200,.650,0,.920],
+ sesame:['🌿 Sesame Oil','Sesame',150,.400,0,.920],
+ other:['📦 Other Product','Raw Material 1',0,1,0,1]
 };
-document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{
- document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
- const p=presets[btn.dataset.p];$('title').textContent=p[0];setRawMaterialDefaults(btn.dataset.p);$('price').value=p[1];$('yield').value=p[2];$('loss').value=p[3];$('density').value=p[4];
- $('extra').style.display=btn.dataset.p==='other'?'block':'none';
- $('otherNameWrap').style.display=btn.dataset.p==='other'?'block':'none';
- calc();
-});
-document.querySelectorAll('input').forEach(x=>x.oninput=calc);
-$('otherName').oninput=()=>{ if(document.querySelector('.tab.active')?.dataset.p==='other') $('title').textContent='📦 '+($('otherName').value.trim()||'Other Product'); };
-$('calculate').onclick=calc;$('extra').style.display='none';$('otherNameWrap').style.display='none';setRawMaterialDefaults('oil');calc();
-
-let psReports=[];
-try{psReports=JSON.parse(localStorage.getItem("ps_production_reports")||"[]")}catch(e){psReports=[]}
-
-function getCurrentReport(){
- const active=document.querySelector(".tab.active");
- return {
-   date:new Date().toLocaleString(),
-   product:(active && active.dataset.p==="other") ? (($("otherName").value||"Other Product").trim()) : (active?active.textContent.trim():"Product"),
-   raw1Name:($("raw1Name").value||"Raw Material 1").trim(),
-   raw1Qty:n("qty"),
-   raw1Price:n("price"),
-   raw1Loss:n("loss"),
-   raw2Name:($("raw2Name").value||"Raw Material 2").trim(),
-   raw2Qty:n("qty2"),
-   raw2Price:n("price2"),
-   raw2Loss:n("loss2"),
-   usable:$("usable").textContent,
-   oil:$("oilkg").textContent,
-   litres:$("litres").textContent,
-   punnakku:$("cakeIncome").textContent,
-   total:$("total").textContent,
-   costKg:$("costkg").textContent,
-   costL:$("costl").textContent,
-   selling:$("sell").textContent
- };
+function setDefaults(type){
+ const p=presets[type];
+ $('title').textContent=p[0]; $('raw1Name').value=p[1]; $('price').value=p[2]; $('yield').value=p[3]; $('loss').value=p[4]; $('density').value=p[5];
+ $('raw2Name').value='Other'; $('qty2').value=0; $('price2').value=0; $('loss2').value=0; $('yield2').value=0;
+ $('petrol2').value=0; $('labour2').value=0; $('oilLabour2').value=0; $('cakeQty2').value=0; $('cakePrice2').value=0; $('bottle2').value=0; $('profit2').value=5; $('density2').value=p[5];
+ if(type==='oil'){ $('petrol').value=100; $('labour').value=100; $('oilLabour').value=400; $('cakeQty').value=25.85; $('cakePrice').value=50; $('bottle').value=12; $('profit').value=5; }
+ else { $('petrol').value=0; $('labour').value=0; $('oilLabour').value=0; $('cakeQty').value=0; $('cakePrice').value=0; $('bottle').value=12; $('profit').value=5; }
+ $('extra').style.display=type==='other'?'block':'none'; $('otherNameWrap').style.display=type==='other'?'block':'none'; calc();
+}
+// Replace the original calculator with a two-raw-material calculation.
+function calc(){
+ const q1=n('qty'), q2=n('qty2');
+ const loss1=Math.min(n('loss'),q1), loss2=Math.min(n('loss2'),q2);
+ const usable1=q1-loss1, usable2=q2-loss2, usable=usable1+usable2;
+ const oil1=usable1*n('yield'), oil2=usable2*n('yield2'), oilkg=oil1+oil2;
+ const density1=n('density')||1, density2=n('density2')||1;
+ const litres1=oil1/density1, litres2=oil2/density2, litres=litres1+litres2;
+ const raw=q1*n('price')+q2*n('price2');
+ const processing=n('petrol')+n('labour')+n('oilLabour')+n('petrol2')+n('labour2')+n('oilLabour2');
+ const ingredients=n('jqty')*n('jprice')+n('lqty')*n('lprice')+n('gqty')*n('gprice')+n('cqty')*n('cprice')+n('water')+n('other');
+ const cake=n('cakeQty')*n('cakePrice')+n('cakeQty2')*n('cakePrice2');
+ const bottle=litres1*n('bottle')+litres2*n('bottle2');
+ const total=Math.max(0,raw+processing+ingredients+bottle-cake);
+ const costkg=oilkg?total/oilkg:0, costl=litres?total/litres:0;
+ const profit=oilkg?((oil1*n('profit'))+(oil2*n('profit2')))/oilkg:n('profit');
+ $('cakeIncome').textContent=money(cake); $('usable').textContent=usable.toFixed(2)+' kg'; $('oilkg').textContent=oilkg.toFixed(3)+' kg'; $('litres').textContent=litres.toFixed(2)+' L'; $('total').textContent=money(total); $('costkg').textContent=money(costkg); $('costl').textContent=money(costl); $('sell').textContent=money(costl*(1+profit/100));
 }
 
-function renderReports(){
- const el=$("reportList");
- if(!psReports.length){el.textContent="No saved reports yet.";return;}
- el.innerHTML=psReports.slice().reverse().map((r,i)=>
- `<div style="border:1px solid #ddd;border-radius:9px;padding:10px;margin-bottom:8px;background:#f7f7f7">
- <b>${r.product}</b><br>${r.date}<br>
- ${r.raw1Name}: ${r.raw1Qty} kg @ ₹${r.raw1Price}/kg | Loss: ${r.raw1Loss} kg<br>
- ${r.raw2Name}: ${r.raw2Qty} kg @ ₹${r.raw2Price}/kg | Loss: ${r.raw2Loss} kg<br>
- Oil: ${r.oil} | ${r.litres}<br>
- Punnakku: ${r.punnakku} | Total Cost: ${r.total}<br>
- Cost/L: ${r.costL} | Selling/L: <b>${r.selling}</b>
- </div>`).join("");
-}
+document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');setDefaults(btn.dataset.p);});
+$('otherName').oninput=()=>{if(document.querySelector('.tab.active').dataset.p==='other')$('title').textContent='📦 '+($('otherName').value.trim()||'Other Product');};
+document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc)); $('calculate').onclick=calc;
 
-$("saveReport").onclick=()=>{
- calc();
- psReports.push(getCurrentReport());
- if(psReports.length>50) psReports=psReports.slice(-50);
- localStorage.setItem("ps_production_reports",JSON.stringify(psReports));
- renderReports();
- alert("Report saved successfully");
-};
-
-$("printReport").onclick=()=>{
- calc();
- const r=getCurrentReport();
- const printHtml=`<!doctype html><html><head><meta charset="utf-8"><title>P.S. Production Report</title>
- <style>body{font-family:Arial,sans-serif;padding:25px;max-width:700px;margin:auto;color:#222}h2{margin-bottom:4px}.row{padding:9px 0;border-bottom:1px solid #ddd}@media print{body{padding:10px}}</style>
- </head><body><h2>🥜 P.S. Production Report</h2><p>${r.date}</p>
- <div class="row"><b>Product:</b> ${r.product}</div>
- <div class="row">${r.raw1Name}: ${r.raw1Qty} kg × ₹${r.raw1Price} | Loss: ${r.raw1Loss} kg</div>
- <div class="row">${r.raw2Name}: ${r.raw2Qty} kg × ₹${r.raw2Price} | Loss: ${r.raw2Loss} kg</div>
- <div class="row">Usable material: ${r.usable}</div>
- <div class="row">Oil output: ${r.oil}</div>
- <div class="row">Total litres: ${r.litres}</div>
- <div class="row">Punnakku income: ${r.punnakku}</div>
- <div class="row">Total production cost: ${r.total}</div>
- <div class="row">Cost per kg: ${r.costKg}</div>
- <div class="row">Cost per litre: ${r.costL}</div>
- <div class="row"><b>Selling price per litre: ${r.selling}</b></div></body></html>`;
- const iframe=document.createElement("iframe");
- iframe.style.position="fixed"; iframe.style.right="0"; iframe.style.bottom="0"; iframe.style.width="0"; iframe.style.height="0"; iframe.style.border="0";
- document.body.appendChild(iframe);
- const doc=iframe.contentWindow.document;
- doc.open(); doc.write(printHtml); doc.close();
- setTimeout(()=>{
-   iframe.contentWindow.focus();
-   iframe.contentWindow.print();
-   setTimeout(()=>iframe.remove(),1000);
- },300);
-};
-renderReports();
-
+let reports=[]; try{reports=JSON.parse(localStorage.getItem('ps_production_reports')||'[]')}catch(e){reports=[]}
+function report(){return {date:new Date().toLocaleString(),product:document.querySelector('.tab.active').dataset.p==='other'?($('otherName').value.trim()||'Other Product'):$('title').textContent,r1:$('raw1Name').value,q1:n('qty'),p1:n('price'),l1:n('loss'),y1:n('yield'),pet1:n('petrol'),lab1:n('labour'),ol1:n('oilLabour'),cq1:n('cakeQty'),cp1:n('cakePrice'),b1:n('bottle'),pr1:n('profit'),d1:n('density'),r2:$('raw2Name').value,q2:n('qty2'),p2:n('price2'),l2:n('loss2'),y2:n('yield2'),pet2:n('petrol2'),lab2:n('labour2'),ol2:n('oilLabour2'),cq2:n('cakeQty2'),cp2:n('cakePrice2'),b2:n('bottle2'),pr2:n('profit2'),d2:n('density2'),usable:$('usable').textContent,oil:$('oilkg').textContent,litres:$('litres').textContent,total:$('total').textContent,cake:$('cakeIncome').textContent,costkg:$('costkg').textContent,costl:$('costl').textContent,sell:$('sell').textContent};}
+function renderReports(){const el=$('reportList');if(!reports.length){el.textContent='No saved reports yet.';return;}el.innerHTML=reports.slice().reverse().map(r=>`<div style="border:1px solid #ddd;border-radius:9px;padding:10px;margin-bottom:8px;background:#f7f7f7"><b>${r.product}</b><br>${r.date}<br>${r.r1}: ${r.q1} kg × ₹${r.p1} | Loss ${r.l1} kg | Yield ${r.y1}<br>${r.r2}: ${r.q2} kg × ₹${r.p2} | Loss ${r.l2} kg | Yield ${r.y2}<br>Petrol ₹${r.pet1}/₹${r.pet2} | Labour ₹${r.lab1}/₹${r.lab2} | Oil labour ₹${r.ol1}/₹${r.ol2}<br>Punnakku ${r.cq1}kg × ₹${r.cp1} / ${r.cq2}kg × ₹${r.cp2}<br>Bottle ₹${r.b1}/₹${r.b2} | Profit ${r.pr1}%/${r.pr2}% | Density ${r.d1}/${r.d2}<br>Oil ${r.oil} | ${r.litres} | Cost/L ${r.costl} | Selling/L <b>${r.sell}</b></div>`).join('');}
+$('saveReport').onclick=()=>{calc();reports.push(report());if(reports.length>50)reports=reports.slice(-50);localStorage.setItem('ps_production_reports',JSON.stringify(reports));renderReports();alert('Report saved successfully');};
+$('printReport').onclick=()=>{calc();const r=report();const w=window.open('','_blank','width=800,height=900');if(!w){alert('Please allow pop-ups for this site to print the report.');return;}w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>P.S. Production Report</title><style>body{font-family:Arial;padding:25px;max-width:750px;margin:auto}.row{padding:9px 0;border-bottom:1px solid #ddd}</style></head><body><h2>🥜 P.S. Production Report</h2><p>${r.date}</p><div class="row"><b>Product:</b> ${r.product}</div><div class="row"><b>${r.r1}:</b> ${r.q1} kg × ₹${r.p1} | Loss ${r.l1} kg | Yield ${r.y1}</div><div class="row"><b>${r.r2}:</b> ${r.q2} kg × ₹${r.p2} | Loss ${r.l2} kg | Yield ${r.y2}</div><div class="row">Petrol ₹${r.pet1}/₹${r.pet2} | Labour ₹${r.lab1}/₹${r.lab2}</div><div class="row">Oil labour ₹${r.ol1}/₹${r.ol2}</div><div class="row">Punnakku ${r.cq1}kg × ₹${r.cp1} / ${r.cq2}kg × ₹${r.cp2}</div><div class="row">Bottle ₹${r.b1}/₹${r.b2} | Profit ${r.pr1}%/${r.pr2}% | Density ${r.d1}/${r.d2}</div><div class="row">Usable: ${r.usable}</div><div class="row">Oil output: ${r.oil}</div><div class="row">Litres: ${r.litres}</div><div class="row">Punnakku income: ${r.cake}</div><div class="row">Total production cost: ${r.total}</div><div class="row">Cost/kg: ${r.costkg}</div><div class="row">Cost/litre: ${r.costl}</div><div class="row"><b>Selling price/litre: ${r.sell}</b></div><script>window.onload=function(){setTimeout(function(){window.print()},300)};<\/script></body></html>`);w.document.close();};
+setDefaults('oil');renderReports();
 </script>
 </body>
 </html>
