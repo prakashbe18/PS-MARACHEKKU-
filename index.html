@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#222222"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
 <title>P.S. Oil Production Calculator</title>
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=imSrE-XYkoI5Un58znkv21QAMnChOJebbaNibI4Pk9Cw0lyyA1CjFEX-NlDxgqRbPRAb4b1o4aiGlL2H55SQfxkr0QkJrH3OS_Nvwml7MLWqHgPfKvXd7OSUCXs089SEsAIKWfpUX6bG4GcyRcMsxfTW5TseN8qNrWRuoNW2jZaaBZi9TSSuQzvFNoYGSEWIZM2XEnZn6ND6UQDHpE6JqwJ0VCYqDJs1HBWycCyCJw_B3pTlEV998Fduueq6B0XiJY53KKpnUIj5fsgeOgfufkbCNfYegja6d0sSU1QQ0Gcwd7Trf6k9sW-miYrJkAjH" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDcxNTA4MWZkODVjOTFlN2NhOWJjYTY3NyZmbj1pbmRleCUyODElMjkuaHRtbCZjZD1hdHRhY2htZW50JnRzPTQ5NzMyMCZwPWZzJmNpZD0xJnNpZz03NjMwNTZjNTJhMjQ2MmE0MmVmMTUwYmQ0Y2JiNDY5ZjI0NTA2ODBmNjM4NDBiNTMyZjBkMGFlY2U0YjRlMjQwJnY9MA"/><style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=GFbPPH7pSc6aqjLtpgaZgns5bxZKPAihIipEanrxZu6IzWX1u84N00Mbhn1pKFQAZG8F4ZbCAlJi35W7B1DM9EkNt_LZaQTxVL9EdalHOZC_DelR0z3PKTCy1HB9D_7Ro_8rMqa0_Gi5cF0hO6TZUi2KfuGO_NYTvpHrBjVLnYsv_H_laxW3BsHEnREG6kvtVebVOSGONQtprTntkyL7_RgC4H1fe1aZqmEVfT9nB_OB4AlaTwkTEBnplTXcN7ip0AKU3ZF6vjgV7vFuVJRhfEKgyjxNYNe6pIzEq19IlN5Ovv1VgNtwPAZafszIbWDwq_gZhEqiKv6ELL0zfdhFhg" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jaGF0Z3B0LmNvbS9iYWNrZW5kLWFwaS9lc3R1YXJ5L2NvbnRlbnQ_aWQ9ZmlsZV8wMDAwMDAwMDI0NzA4MWZhYTFlY2VjMTBlMWUwNDcwNCZmbj1pbmRleF9maXhlZF9yZXN1bHQuaHRtbCZjZD1hdHRhY2htZW50JnRzPTQ5NzMyMCZwPWZzJmNpZD0xJnNpZz01ZjE5MjdiOGMxOTE5ZWZiYWI2MmRkODZlMzBiZDg1NjEwZGU1Yzk5OWVhZDM3YTdmZDBjMWY4NzRhMzE2YmNhJnY9MA"/><style>
 body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:14px;color:#222}
 .app{max-width:520px;margin:auto}.head{padding:10px 4px 14px}.head h2{margin:0}.sub{color:#666;font-size:13px;margin-top:4px}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.tab{padding:12px 5px;border:1px solid #ddd;border-radius:10px;background:white;font-weight:bold}.active{background:#e8f0ff}
@@ -118,6 +118,9 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 </div>
 
 <script>
+const $=id=>document.getElementById(id);
+const n=id=>Math.max(0,parseFloat($(id).value)||0);
+const money=x=>"₹"+Number(x).toFixed(2);
 
 const presets={
  oil:['🥜 Groundnut Oil','Groundnut',120,.450,3,.914],
