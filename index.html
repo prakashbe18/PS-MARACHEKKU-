@@ -7,7 +7,7 @@
 <style>
 body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:14px;color:#222}
 .app{max-width:520px;margin:auto}.head{padding:10px 4px 14px}.head h2{margin:0}.sub{color:#666;font-size:13px;margin-top:4px}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.tab{padding:12px 5px;border:1px solid #ddd;border-radius:10px;background:white;font-weight:bold}.active{background:#e8f0ff}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.tab{padding:12px 5px;border:1px solid #ddd;border-radius:10px;background:white;font-weight:bold}.active{background:#e8f0ff}
 .card{background:white;border:1px solid #ddd;border-radius:14px;padding:15px;margin-bottom:12px}
 h3{margin:0 0 12px;font-size:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label{font-size:12px;font-weight:bold;color:#666;display:block;margin-bottom:5px}
@@ -24,15 +24,34 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 <div class="tabs">
 <button class="tab active" data-p="oil">🥜 Groundnut</button>
 <button class="tab" data-p="coconut">🥥 Coconut</button>
-<button class="tab" data-p="special">🍋 Special</button>
+<button class="tab" data-p="sesame">🌿 Sesame Oil</button>
+<button class="tab" data-p="other">📦 Other Product</button>
 </div>
 
 <div class="card">
 <h3 id="title">🥜 Groundnut Oil</h3>
+<div id="otherNameWrap" style="display:none;margin-bottom:10px"><label>Other Product Name</label><input id="otherName" type="text" value="Other Product" placeholder="Enter product name"></div>
+<div class="card" style="padding:12px;margin-top:10px;background:#fafafa">
+<h3 style="font-size:15px">🧺 Raw Material 1</h3>
 <div class="grid">
-<div><label>Raw material kg</label><input id="qty" type="number" value="50" min="0" step=".01"></div>
+<div><label>Raw material name</label><input id="raw1Name" type="text" value="Groundnut"></div>
+<div><label>Quantity kg</label><input id="qty" type="number" value="50" min="0" step=".01"></div>
 <div><label>Price / kg ₹</label><input id="price" type="number" value="120" min="0" step=".01"></div>
-<div><label>Dry / processing loss kg</label><input id="loss" type="number" value="3" min="0" step=".01"></div>
+<div><label>Loss kg</label><input id="loss" type="number" value="3" min="0" step=".01"></div>
+</div>
+</div>
+
+<div class="card" style="padding:12px;margin-top:10px;background:#fafafa">
+<h3 style="font-size:15px">🧺 Raw Material 2</h3>
+<div class="grid">
+<div><label>Raw material name</label><input id="raw2Name" type="text" value="Other"></div>
+<div><label>Quantity kg</label><input id="qty2" type="number" value="0" min="0" step=".01"></div>
+<div><label>Price / kg ₹</label><input id="price2" type="number" value="0" min="0" step=".01"></div>
+<div><label>Loss kg</label><input id="loss2" type="number" value="0" min="0" step=".01"></div>
+</div>
+</div>
+
+<div class="grid">
 <div><label>Oil yield / kg</label><input id="yield" type="number" value=".450" min="0" step=".001"></div>
 <div><label>Petrol / transport ₹</label><input id="petrol" type="number" value="100" min="0"></div>
 <div><label>Initial labour ₹</label><input id="labour" type="number" value="100" min="0"></div>
@@ -74,6 +93,15 @@ button.calc{width:100%;padding:14px;border:0;border-radius:11px;background:#222;
 </div>
 <div class="note">Punnakku income is deducted from total production cost. Drying loss is already included in the purchased raw-material cost and is not double-counted.</div>
 </div>
+
+<div class="card" id="reportCard">
+<h3>📋 Production Report</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button id="saveReport" type="button" style="padding:12px;border:0;border-radius:9px;background:#222;color:#fff;font-weight:bold">💾 Save Report</button>
+<button id="printReport" type="button" style="padding:12px;border:1px solid #ccc;border-radius:9px;background:#fff;font-weight:bold">🖨️ Print Report</button>
+</div>
+<div id="reportList" style="margin-top:12px;font-size:13px;color:#555">No saved reports yet.</div>
+</div>
 <button class="calc" id="calculate">Calculate Price 🔄</button>
 </div>
 
@@ -94,9 +122,11 @@ const $=id=>document.getElementById(id);
 const n=id=>Math.max(0,parseFloat($(id).value)||0);
 const money=x=>'₹'+x.toFixed(2);
 function calc(){
- let q=n('qty'), loss=Math.min(n('loss'),q), usable=q-loss;
+ let q=n('qty'), q2=n('qty2');
+ let loss=Math.min(n('loss'),q), loss2=Math.min(n('loss2'),q2);
+ let usable1=q-loss, usable2=q2-loss2, usable=usable1+usable2;
  let oilkg=usable*n('yield'), density=n('density')||1, litres=oilkg/density;
- let raw=q*n('price');
+ let raw=q*n('price')+q2*n('price2');
  let extras=n('petrol')+n('labour')+n('oilLabour');
  let ingredients=n('jqty')*n('jprice')+n('lqty')*n('lprice')+n('gqty')*n('gprice')+n('cqty')*n('cprice')+n('water')+n('other');
  let cakeIncome=n('cakeQty')*n('cakePrice');
@@ -112,18 +142,116 @@ function calc(){
  $('costl').textContent=money(costl);
  $('sell').textContent=money(costl*(1+n('profit')/100));
 }
+
+function setRawMaterialDefaults(type){
+  if(type==='oil'){
+    $('raw1Name').value='Groundnut'; $('raw2Name').value='Other';
+  }else if(type==='coconut'){
+    $('raw1Name').value='Coconut'; $('raw2Name').value='Other';
+  }else if(type==='sesame'){
+    $('raw1Name').value='Sesame'; $('raw2Name').value='Other';
+  }else{
+    $('raw1Name').value='Raw Material 1'; $('raw2Name').value='Raw Material 2';
+  }
+}
+
 const presets={
  oil:['🥜 Groundnut Oil',120,.450,3,.914],
  coconut:['🥥 Coconut Oil',200,.650,0,.920],
- special:['🍋 Special Product',0,1,0,1]
+ sesame:['🌿 Sesame Oil',150,.400,0,.920],
+ other:['📦 Other Product',0,1,0,1]
 };
 document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
- const p=presets[btn.dataset.p];$('title').textContent=p[0];$('price').value=p[1];$('yield').value=p[2];$('loss').value=p[3];$('density').value=p[4];
- $('extra').style.display=btn.dataset.p==='oil'?'none':'block';calc();
+ const p=presets[btn.dataset.p];$('title').textContent=p[0];setRawMaterialDefaults(btn.dataset.p);$('price').value=p[1];$('yield').value=p[2];$('loss').value=p[3];$('density').value=p[4];
+ $('extra').style.display=btn.dataset.p==='other'?'block':'none';
+ $('otherNameWrap').style.display=btn.dataset.p==='other'?'block':'none';
+ calc();
 });
 document.querySelectorAll('input').forEach(x=>x.oninput=calc);
-$('calculate').onclick=calc;$('extra').style.display='none';calc();
+$('otherName').oninput=()=>{ if(document.querySelector('.tab.active')?.dataset.p==='other') $('title').textContent='📦 '+($('otherName').value.trim()||'Other Product'); };
+$('calculate').onclick=calc;$('extra').style.display='none';$('otherNameWrap').style.display='none';setRawMaterialDefaults('oil');calc();
+
+let psReports=[];
+try{psReports=JSON.parse(localStorage.getItem("ps_production_reports")||"[]")}catch(e){psReports=[]}
+
+function getCurrentReport(){
+ const active=document.querySelector(".tab.active");
+ return {
+   date:new Date().toLocaleString(),
+   product:(active && active.dataset.p==="other") ? (($("otherName").value||"Other Product").trim()) : (active?active.textContent.trim():"Product"),
+   raw1Name:($("raw1Name").value||"Raw Material 1").trim(),
+   raw1Qty:n("qty"),
+   raw1Price:n("price"),
+   raw1Loss:n("loss"),
+   raw2Name:($("raw2Name").value||"Raw Material 2").trim(),
+   raw2Qty:n("qty2"),
+   raw2Price:n("price2"),
+   raw2Loss:n("loss2"),
+   usable:$("usable").textContent,
+   oil:$("oilkg").textContent,
+   litres:$("litres").textContent,
+   punnakku:$("cakeIncome").textContent,
+   total:$("total").textContent,
+   costKg:$("costkg").textContent,
+   costL:$("costl").textContent,
+   selling:$("sell").textContent
+ };
+}
+
+function renderReports(){
+ const el=$("reportList");
+ if(!psReports.length){el.textContent="No saved reports yet.";return;}
+ el.innerHTML=psReports.slice().reverse().map((r,i)=>
+ `<div style="border:1px solid #ddd;border-radius:9px;padding:10px;margin-bottom:8px;background:#f7f7f7">
+ <b>${r.product}</b><br>${r.date}<br>
+ ${r.raw1Name}: ${r.raw1Qty} kg @ ₹${r.raw1Price}/kg | Loss: ${r.raw1Loss} kg<br>
+ ${r.raw2Name}: ${r.raw2Qty} kg @ ₹${r.raw2Price}/kg | Loss: ${r.raw2Loss} kg<br>
+ Oil: ${r.oil} | ${r.litres}<br>
+ Punnakku: ${r.punnakku} | Total Cost: ${r.total}<br>
+ Cost/L: ${r.costL} | Selling/L: <b>${r.selling}</b>
+ </div>`).join("");
+}
+
+$("saveReport").onclick=()=>{
+ calc();
+ psReports.push(getCurrentReport());
+ if(psReports.length>50) psReports=psReports.slice(-50);
+ localStorage.setItem("ps_production_reports",JSON.stringify(psReports));
+ renderReports();
+ alert("Report saved successfully");
+};
+
+$("printReport").onclick=()=>{
+ calc();
+ const r=getCurrentReport();
+ const printHtml=`<!doctype html><html><head><meta charset="utf-8"><title>P.S. Production Report</title>
+ <style>body{font-family:Arial,sans-serif;padding:25px;max-width:700px;margin:auto;color:#222}h2{margin-bottom:4px}.row{padding:9px 0;border-bottom:1px solid #ddd}@media print{body{padding:10px}}</style>
+ </head><body><h2>🥜 P.S. Production Report</h2><p>${r.date}</p>
+ <div class="row"><b>Product:</b> ${r.product}</div>
+ <div class="row">${r.raw1Name}: ${r.raw1Qty} kg × ₹${r.raw1Price} | Loss: ${r.raw1Loss} kg</div>
+ <div class="row">${r.raw2Name}: ${r.raw2Qty} kg × ₹${r.raw2Price} | Loss: ${r.raw2Loss} kg</div>
+ <div class="row">Usable material: ${r.usable}</div>
+ <div class="row">Oil output: ${r.oil}</div>
+ <div class="row">Total litres: ${r.litres}</div>
+ <div class="row">Punnakku income: ${r.punnakku}</div>
+ <div class="row">Total production cost: ${r.total}</div>
+ <div class="row">Cost per kg: ${r.costKg}</div>
+ <div class="row">Cost per litre: ${r.costL}</div>
+ <div class="row"><b>Selling price per litre: ${r.selling}</b></div></body></html>`;
+ const iframe=document.createElement("iframe");
+ iframe.style.position="fixed"; iframe.style.right="0"; iframe.style.bottom="0"; iframe.style.width="0"; iframe.style.height="0"; iframe.style.border="0";
+ document.body.appendChild(iframe);
+ const doc=iframe.contentWindow.document;
+ doc.open(); doc.write(printHtml); doc.close();
+ setTimeout(()=>{
+   iframe.contentWindow.focus();
+   iframe.contentWindow.print();
+   setTimeout(()=>iframe.remove(),1000);
+ },300);
+};
+renderReports();
+
 </script>
 </body>
 </html>
